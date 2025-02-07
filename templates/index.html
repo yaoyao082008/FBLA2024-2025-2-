@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="row py-3 justify-content-center">
+        <div class="col-md-auto">
+            <h1 class="text-center">Finance Calculator App</h1>
+        </div>
+        <hr>
+    </div>
+    <div class="row">
+        <div class="col-md-auto">
+            <p class="text-center">This program allows users to track their finances and generate earnings and graphs. First the user must sign in with an google account.
+                Then the app allows users to input their income types and expense types including amount, catergory, and date of each transactions. Afterwards, 
+                it allows user to calculate their total balance. The user can update or delete their income or expenses accordingly and also filter their inputs.
+                Finally, the app analyzes the spending patterns by displaying 3 graphs : 
+                End of month balance, 
+                Income type, 
+                Expense Type.
+            </p>
+        </div>
+    </div>
+
+    <div class="accordion accordion-flush" id="accordionFlushExample">
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="flush-headingOne">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+              Adding an Income/Expense
+            </button>
+          </h2>
+          <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+            <div class="accordion-body">To add a class, click the <em class="text-success">green add</em> left of the income header. Then select the type of income and the date. </div>
+          </div>
+        </div>
+        
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="flush-headingTwo">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+              Removing an Income/Expense
+            </button>
+          </h2>
+          <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
+            <div class="accordion-body">To remove an Income and or Expense, click the <em class="text-danger">red remove</em>  button next to the right of the class.</div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="flush-headingThree">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThree" aria-expanded="false" aria-controls="flush-collapseThree">
+              Analyzing Data
+            </button>
+          </h2>
+          <div id="flush-collapseThree" class="accordion-collapse collapse" aria-labelledby="flush-headingThree" data-bs-parent="#accordionFlushExample">
+            <div class="accordion-body">
+                To analyze your spending data simply click the <em class="text-success">green analyze</em> button on the bottom of the page. Then you will be redirected to 3 graphs that you can analyze.
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="flush-headingFour">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseFour" aria-expanded="false" aria-controls="flush-collapseFour">
+              Need extra help?
+            </button>
+          </h2>
+          <div id="flush-collapseFour" class="accordion-collapse collapse" aria-labelledby="flush-headingFour" data-bs-parent="#accordionFlushExample">
+            <div class="accordion-body">
+                Use our <a href="/chatbot">AI Chatbot</a> for any extra inquiries !
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-auto py-3">
+            {% if user %}
+                <a href="/dashboard" class="btn btn-outline-dark form-inline fw-bold ">Lets Calculate !</a>
+            {% else %}
+                <p class="text-center">In order to use our app, users must <br> 
+                    <a onclick="googleLogin()" class="btn btn-outline-dark form-inline">Log In</a>
+                </p>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col align-self-end">
+            <p class="text-end">
+                - made by students Prateek Kalusani, Yaozhou Xiong, and Shreyas Sindhaval
+            </p>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

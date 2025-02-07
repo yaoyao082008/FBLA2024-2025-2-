@@ -1,0 +1,251 @@
+{% extends 'base.html'%}
+
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
+{% endblock %}
+
+{% block title %}Analyze{% endblock %}
+
+
+{% block body %}
+
+<div class="container-xxl ">
+    <div class="row py-5 justify-content-center">
+        
+        <div class="text-center col-md-auto" style="width: 550px;">
+            <h2 class="text-center py-5">Balance of <em class="fw-bold">${{ user["balance"] | round(2) }}</em></h2>
+            <div class="row py-3">
+                <div class="offset-md-1 col-md-3">
+                    <select name="startDate" id="startDate" class="form-select">
+                        <option value="0" selected>January</option>
+                        <option value="1">February</option>
+                        <option value="2">March</option>
+                        <option value="3">April</option>
+                        <option value="4">May</option>
+                        <option value="5">June</option>
+                        <option value="6">July</option>
+                        <option value="7">August</option>
+                        <option value="8">September</option>
+                        <option value="9">October</option>
+                        <option value="10">November</option>
+                        <option value="11">Decemer</option>
+                    </select>
+                </div>
+                <div class="offset-md-1 col-md-1">
+                    <p class="fw-bold h5">to</p>
+                </div>
+                <div class="offset-md-1 col-md-3">
+                    <select name="endDate" id="endDate" class="form-select">
+                        <option value="0" selected>January</option>
+                        <option value="1">February</option>
+                        <option value="2">March</option>
+                        <option value="3">April</option>
+                        <option value="4">May</option>
+                        <option value="5">June</option>
+                        <option value="6">July</option>
+                        <option value="7">August</option>
+                        <option value="8">September</option>
+                        <option value="9">October</option>
+                        <option value="10">November</option>
+                        <option value="11">Decemer</option>
+                    </select>
+                </div>
+                <div class="offset-md-1 col-md-1">
+                    <button class="btn btn-outline-success"id="calculatePeriod" onclick="showMonths()"><span>Go</span></button>
+                </div>
+            </div>
+            <canvas id="lineChart" class="py-2"></canvas>
+        </div>
+    </div>
+
+    <div class="row py-3">
+        <div class="offset-md-2 col-md-6" style="width: 300px;">
+            <h3 class="text-center">Income Type </h3>
+            <hr>
+            <canvas id="incomePieChart"></canvas>
+        </div>
+        <div class="text-center offset-md-2 col-md-6" style="width: 300px;">
+            <h3 class="text-center">Expense Type </h3>
+            <hr>
+            <canvas id="expensePieChart"></canvas>
+        </div>
+    </div>
+    
+</div>
+
+<script>
+    function showMonths(){
+        location.reload();
+    }
+
+    
+    (async function() {
+
+    //line chart
+    
+    var lineElement =  document.getElementById('lineChart');
+    
+    var start = parseInt(document.getElementById("startDate").value, 10);
+    var end = parseInt(document.getElementById("endDate").value, 10);
+
+    
+
+    if (start >= end ){
+        start=0
+        end=11
+    }
+
+    
+    
+    const months = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    
+    
+    const lineLabels = months.slice(start,end+1);
+
+
+    const allData = [{{user['months'][1]}},{{user['months'][2]}},{{user['months'][3]}},{{user['months'][4]}},{{user['months'][5]}},{{user['months'][6]}},{{user['months'][7]}},{{user['months'][8]}},{{user['months'][9]}},{{user['months'][10]}},{{user['months'][11]}},{{user['months'][12]}}];
+    const data = [];
+
+    for (let i = 0; i <= end; i++) {
+        data.push(allData[i]);
+    }
+
+
+    
+    const lineData = {
+        labels : lineLabels,
+        datasets : [{
+            label: 'End of Month Balance',
+            data: data,
+            fill: false,
+            borderColor: 'rgb(75, 192, 192)',
+            tension: 0.1
+        }]
+            
+    };
+      
+
+    const lineGraph = new Chart(
+        lineElement,
+      {
+        type: 'line',
+        
+        data: lineData,
+        
+        options: {
+            responsive : true,
+            scales: {
+                x: {
+                    title: {
+                    display: true,
+                    text: 'Months',
+                    }
+                },
+                
+                y: {
+                    beginAtZero: true,
+                    title: {
+                    display: true,
+                    text: 'Balance In Dollars'
+                    }
+                }
+            
+            }
+        }
+        
+    }
+    );
+
+    //end line chart
+
+
+    //income type pie chart
+
+    var incomePieElement =  document.getElementById('incomePieChart');
+
+    const incomePieLabels = [
+        'Wire', 'Cash', 'Check','Card'
+    ];
+    
+    const incomePieData = {
+        labels : incomePieLabels,
+        datasets : [{
+            label: 'Amount',
+            data: [ {{ user['income_types']['Wire']}} , {{ user['income_types']['Cash']}} , {{ user['income_types']['Check']}},  {{ user['income_types']['Card']}} ],
+            backgroundColor: [
+            'rgb(255, 99, 132)',
+            'rgb(54, 162, 235)',
+            'rgb(255, 205, 86)',
+            'rgb(90, 31, 31)'
+            ],
+            hoverOffset : 4
+        }]
+            
+    };
+      
+
+    const incomePieGraph = new Chart(
+        incomePieElement,
+      {
+        type: 'pie',
+        
+        data: incomePieData,
+        
+        
+    }
+    );
+
+    //end of income pie chart
+
+
+
+
+
+
+    //expense pie chart
+
+
+    var expensePieElement =  document.getElementById('expensePieChart');
+
+    const expensePieLabels = [
+        'Wire', 'Cash', 'Check','Card'
+    ];
+    
+    const expensePieData = {
+        labels : expensePieLabels,
+        datasets : [{
+            label: 'Amount',
+            data: [ {{ user['expense_types']['Wire']}} , {{ user['expense_types']['Cash']}} , {{ user['expense_types']['Check']}}, {{ user['expense_types']['Card']}}  ],
+            backgroundColor: [
+            'rgb(255, 99, 132)',
+            'rgb(54, 162, 235)',
+            'rgb(255, 205, 86)',
+            'rgb(90, 31, 31)'
+            ],
+            hoverOffset: 4
+        }]
+            
+    };
+      
+
+    const expensePieGraph = new Chart(
+        expensePieElement,
+      {
+        type: 'pie',
+        
+        data: expensePieData,
+        
+        
+    }
+    );
+
+
+    //end of expense pie chart
+    
+  })();
+</script>
+
+{% endblock %} 

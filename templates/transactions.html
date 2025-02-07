@@ -1,0 +1,437 @@
+{% extends 'base.html'%}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block head %}
+<script>
+    function filterIncome() {
+        // Get the values from the search input and checkboxes
+        let search = document.getElementById("incomeSearch");
+        let filter = search.value.toUpperCase();
+        let wire = document.getElementById("wireIncome");
+        let cash = document.getElementById("cashIncome");
+        let check = document.getElementById("checkIncome");
+        let card = document.getElementById("cardIncome")
+        // Get all the income input fields
+        let inputFields = document.querySelectorAll(".income_input_field");
+
+        // Loop through each input field
+        for (let i = 0; i < inputFields.length; i++) {
+            let input = inputFields[i].querySelector("#income_name");
+            let type = inputFields[i].querySelector("select[name='income_type[]']");
+
+            // Get the transaction name and type
+            let txtValue = input.value.toUpperCase();
+            let typeValue = type ? type.value.toUpperCase() : "";
+
+            // Check if both the search term and filter condition are met
+            if (
+                (txtValue.indexOf(filter) !== -1) &&  // Name search
+                ((wire.checked && typeValue === "WIRE") || 
+                (cash.checked && typeValue === "CASH") || 
+                (check.checked && typeValue === "CHECK") ||
+                (card.checked && typeValue == "CARD") ||
+                (!wire.checked && !cash.checked && !check.checked) && !card.checked)  // Type filter
+            ) {
+                inputFields[i].style.display = "";  // Show if matched
+            } else {
+                inputFields[i].style.display = "none";  // Hide if not matched
+            }
+        }
+    }
+
+
+    function filterExpense() {
+        // Get the values from the search input and checkboxes
+        let search = document.getElementById("expenseSearch");
+        let filter = search.value.toUpperCase();
+        let wire = document.getElementById("wireExpense");
+        let cash = document.getElementById("cashExpense");
+        let check = document.getElementById("checkExpense");
+        let card = document.getElementById("cardExpense")
+
+        // Get all the income input fields
+        let inputFields = document.querySelectorAll(".expense_input_field");
+
+        // Loop through each input field
+        for (let i = 0; i < inputFields.length; i++) {
+            let input = inputFields[i].querySelector("#expense_name");
+            let type = inputFields[i].querySelector("select[name='expense_type[]']");
+
+            // Get the transaction name and type
+            let txtValue = input.value.toUpperCase();
+            let typeValue = type ? type.value.toUpperCase() : "";
+
+            // Check if both the search term and filter condition are met
+            if (
+                (txtValue.indexOf(filter) !== -1) &&  // Name search
+                ((wire.checked && typeValue === "WIRE") || 
+                (cash.checked && typeValue === "CASH") || 
+                (check.checked && typeValue === "CHECK") ||
+                (card.checked && typeValue === "CARD") ||
+                (!wire.checked && !cash.checked && !check.checked && !card.checked))  // Type filter
+            ) {
+                inputFields[i].style.display = "";  // Show if matched
+            } else {
+                inputFields[i].style.display = "none";  // Hide if not matched
+            }
+        }
+    }
+
+    function updateIncomes(){
+        $.ajax({
+            url: '/update_income_transactions', // server url
+            type: "POST",
+            data: {
+                "income_names": $("div input[name='income_name[]']").map( function() { return $(this).val(); } ).get(),
+                "income_types": $("div select[name='income_type[]']").map( function() { return $(this).val(); } ).get(),
+                "income_amounts": $("div input[name='income_amount[]']").map( function() { return $(this).val(); } ).get(),
+                "income_date": $("div input[name='income_date[]']").map( function() { return $(this).val(); } ).get()
+            }, // data for server
+            success: function (response) {
+                
+                updateExpenses(); // reload page if succesful
+            },
+            error: function (response) {
+                alert("Make sure you are inputting the proper data to the correct fields!")
+                }
+        });
+
+        
+    }
+
+    function updateExpenses(){
+        $.ajax({
+            url: '/update_expense_transactions', // server url
+            type: "POST",
+            data: {
+                "expense_names": $("div input[name='expense_name[]']").map( function() { return $(this).val(); } ).get(),
+                "expense_types": $("div select[name='expense_type[]']").map( function() { return $(this).val(); } ).get(),
+                "expense_amounts": $("div input[name='expense_amount[]']").map( function() { return $(this).val(); } ).get(),
+                "expense_date": $("div input[name='expense_date[]']").map( function() { return $(this).val(); } ).get()
+            }, // data for server
+            success: function (response) {
+                window.location.href = '/analyze'; // reload page if succesful
+            },
+            error: function (response) {
+                alert("Make sure you are inputting the proper data to the correct fields!")
+                
+            }
+        });
+    }
+
+</script>
+
+{% endblock%}
+
+{% block body %}
+<div class="container">
+    <div class="row py-5 justify-content-center">
+        <div class="col-md-auto">
+            <h6>You have <span class="h1">${{user["balance"] | round(2)}}</span></h4>
+        </div>
+    </div>
+    <div class="row py-3">
+        <div class="col-md-6 text-center" id="income_form">
+            <div class="row justify-content-start">
+                <div class="col-md-1 offset-md-1">
+                    <button class="btn btn-success"id="add_income_btn"><span>Add</span></button>
+                </div>
+                <div class="col-md-3 offset-md-1">
+                    <h3>Income</h3>
+                </div>
+                
+                <div class="col-md-3 offset-md-1">
+                    <input  class="form-control" type="search" aria-label="Search" id="incomeSearch" onkeyup="filterIncome()" placeholder="Search for name">
+                </div>
+
+
+                <div class="dropdown col-md-auto">
+                    <a class="btn btn-light dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                      <img src="{{url_for('static',filename='filter.png')}}" alt="filter" style="width:25px; height: 25px;">
+                    </a>
+                    <!-- checks for changes in requested income 'type' filtering -->
+                    <ul class="dropdown-menu text-center" aria-labelledby="dropdownMenuLink">
+                        <li> 
+                        <input type="checkbox" id="wireIncome" value="wire" onchange="filterIncome()">
+                        <label for="">Wire</label>
+                        </li>
+
+                        <li>
+                            <input type="checkbox" id="checkIncome" value="check" onchange="filterIncome()">
+                            <label for="">Check</label>
+                        </li>
+
+                        <li>
+                            <input type="checkbox" id="cashIncome" value="cash" onchange="filterIncome()">
+                            <label for="">Cash</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" id="cardIncome" value="card" onchange="filterIncome()">
+                            <label for="">Card</label>
+                        </li>
+                      
+                    </ul>
+                </div>
+
+            </div>
+            <hr>
+            <!-- creating new incomes -->
+
+            <!-- determines income types -->
+            {% for income in user['incomes'] %}
+            <div class="row justify-content-center  income_input_field">
+                <div class="form-group col-md-3 py-1">
+                    <label for="Transaction_Name" class="fw-bold" >Transaction Name</label>
+                    <input name = "income_name[]" class="form-control" value="{{income}}" placeholder="paycheck , cash" id="income_name">
+                </div>
+                <div class="form-group col-md-2 py-1">
+                    <label for="inputState" class="fw-bold" >Type</label>
+                    <select id="inputState" name = "income_type[]" class="form-select incomeType" value="{{user['incomes'][income]['type']}}">
+                        {% if user['incomes'][income]['type'] == "Cash" %}
+                        <option value="Cash" selected>Cash</option>
+                        <option value="Check">Check</option>
+                        <option value="Wire">Wire</option>
+                        <option value="Card">Card</option>
+                        {% elif user['incomes'][income]['type'] == "Check"%}
+                        <option value="Cash">Cash</option>
+                        <option value="Check" selected>Check</option>
+                        <option value="Wire">Wire</option>
+                        <option value="Card">Card</option>
+                        {% elif user['incomes'][income]['type'] == "Card"%}
+                        <option value="Cash">Cash</option>
+                        <option value="Check">Check</option>
+                        <option value="Wire">Wire</option>
+                        <option value="Card" selected>Card</option>
+                        {% else %}
+                        <option value="Cash">Cash</option>
+                        <option value="Check">Check</option>
+                        <option value="Wire" selected>Wire</option>
+                        <option value="Card">Card</option>
+                        {% endif %}
+                    </select>
+                </div>
+                <div class="form-group col-md-2 py-1">
+                    <label for="amount" class="fw-bold">$Amount</label>
+                    <input id="input_field" type="number" name = "income_amount[]" class="form-control" value="{{user['incomes'][income]['amt']}}"></input>
+                </div>
+
+                <div class="form-group col-md-auto py-1">
+                    <label for="amount" class="fw-bold">Date</label>
+                    <input id="input_field" type="date" name = "income_date[]" class="form-control" value="{{user['incomes'][income]['date']}}"></input>
+                </div>
+                <div class="py-4 ps-1 col-md-1">
+                    <button class="btn btn-outline-danger"id="remove_item_btn"><span>Remove</span></button>
+                </div>
+
+            </div>
+            {% endfor %}
+            
+        </div>
+        <div class="col-md-6 text-center" id="expense_form">
+            <div class="row justify-content-start">
+                <div class="col-md-1 offset-md-1">
+                    <button class="btn btn-success"id="add_expense_btn"> <span>Add</span></button>
+                </div>
+                <div class="col-md-3 offset-md-1">
+                    <h3>Expenses</h3>
+                </div>
+                <div class="col-md-3 offset-md-1">
+                    <input  class="form-control" type="search" aria-label="Search" id="expenseSearch" onkeyup="filterExpense()" placeholder="Search for name">
+                </div>
+
+                <div class="dropdown col-md-auto">
+                    <a class="btn btn-light dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                      <img src="{{url_for('static',filename='filter.png')}}" alt="filter" style="width:25px; height: 25px;">
+                    </a>
+                  <!-- checks for changes in requested expense 'type' filtering -->
+
+                    <ul class="dropdown-menu text-center" aria-labelledby="dropdownMenuLink">
+                        <li>
+                        <input type="checkbox" id="wireExpense" value="wire" onchange="filterExpense()">
+                        <label for="">Wire</label>
+                        </li>
+
+                        <li>
+                            <input type="checkbox" id="checkExpense" value="check" onchange="filterExpense()">
+                            <label for="">Check</label>
+                        </li>
+
+                        <li>
+                            <input type="checkbox" id="cashExpense" value="cash" onchange="filterExpense()">
+                            <label for="">Cash</label>
+                        </li>
+
+                        <li>
+                            <input type="checkbox" id="cardExpense" value="card" onchange="filterExpense()">
+                            <label for="">Card</label>
+                        </li>
+                      
+                    </ul>
+                </div>
+            </div>
+            <hr>
+
+            <!-- creating new expenses -->
+            <!-- determines expense types -->
+            {% for expense in user["expenses"] %}
+            <div class="row justify-content-center expense_input_field">
+                <div class="form-group col-md-3 py-1">
+                    <label for="Transaction_Name" class="fw-bold" >Transaction Name</label>
+                    <input name = "expense_name[]" class="form-control" value="{{expense}}" id="expense_name">
+                </div>
+                
+                <div class="form-group col-md-2 py-1">
+                    <label for="inputState" class="fw-bold" >Type</label>
+                    <select id="inputState" name = "expense_type[]" value="{{user['expenses'][expense]['type']}}" class="form-select expenseType">
+
+                        {% if user['expenses'][expense]['type'] == "Cash" %}
+                        <option value="Cash" selected>Cash</option>
+                        <option value="Check">Check</option>
+                        <option value="Wire">Wire</option>
+                        <option value="Card">Card</option>
+                        {% elif user['expenses'][expense]['type'] == "Check"%}
+                        <option value="Cash">Cash</option>
+                        <option value="Check" selected>Check</option>
+                        <option value="Wire">Wire</option>
+                        <option value="Card">Card</option>
+                        {% elif user['expenses'][expense]['type'] == "Card"%}
+                        <option value="Cash">Cash</option>
+                        <option value="Check">Check</option>
+                        <option value="Wire">Wire</option>
+                        <option value="Card" selected>Card</option>
+                        {% else %}
+                        <option value="Cash">Cash</option>
+                        <option value="Check">Check</option>
+                        <option value="Wire" selected>Wire</option>
+                        <option value="Card">Card</option>
+                        {% endif %}
+
+                    </select>
+                </div>
+
+                <div class="form-group col-md-2 py-1">
+                    <label for="amount" class="fw-bold">$Amount</label>
+                    <input id="input_field" type="text" name="expense_amount[]" class="form-control" value="{{user['expenses'][expense]['amt']}}"></input>
+                </div>
+
+                <div class="form-group col-md-auto py-1">
+                    <label for="amount" class="fw-bold">Date</label>
+                    <input id="input_field" type="date" name = "expense_date[]" class="form-control" value="{{user['expenses'][expense]['date']}}"></input>
+                </div>
+
+                <div class="py-4 ps-1 col-md-1">
+                    <button class="btn btn-outline-danger"id="remove_item_btn"><span>Remove</span></button>
+                </div>
+
+            </div>
+            {% endfor %}
+            
+
+        </div>
+        
+
+        <!-- updates displayed balance and redirects to Analyze -->
+        <div class="py-4 ps-1 text-center">
+            <button class="btn btn-success" onclick="updateIncomes()"> <span>Analyze</span></button>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    $(document).ready(function(webpage){
+
+        //adding an income transaction form
+        $("#add_income_btn").click(function(addNewIncome){
+
+            addNewIncome.preventDefault();
+
+            $("#income_form").append(
+                `
+                <div class="row justify-content-center  income_input_field">
+                    <div class="form-group col-md-3 py-1">
+                        <label for="Transaction_Name" class="fw-bold" >Transaction Name</label>
+                        <input name = "income_name[]" class="form-control" value="" placeholder="paycheck , cash" id="income_name">
+                    </div>
+                    <div class="form-group col-md-2 py-1">
+                        <label for="inputState" class="fw-bold" >Type</label>
+                        <select id="inputState" name = "income_type[]" class="form-select incomeType">
+                            <option value="Cash">Cash</option>
+                            <option value="Check">Check</option>
+                            <option selected value="Wire">Wire</option>
+                            <option selected value="Card">Card</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-2 py-1">
+                        <label for="amount" class="fw-bold">$Amount</label>
+                        <input id="input_field" type="number" name = "income_amount[]" class="form-control" value=100></input>
+                    </div>
+
+                    <div class="form-group col-md-auto py-1">
+                        <label for="amount" class="fw-bold">Date</label>
+                        <input id="input_field" type="date" name = "income_date[]" class="form-control" value=100></input>
+                    </div>
+                    
+                    <div class="py-4 ps-1 col-md-1">
+                        <button class="btn btn-outline-danger"id="remove_item_btn"><span>Remove</span></button>
+                    </div>
+                </div> 
+                `
+            )
+
+        })
+
+        //adding an expense transaction form
+        $("#add_expense_btn").click(function(addNewExpense){
+
+            addNewExpense.preventDefault();
+
+            $("#expense_form").append(
+                `
+                <div class="row justify-content-center expense_input_field">
+                <div class="form-group col-md-3 py-1">
+                    <label for="Transaction_Name" class="fw-bold" >Transaction Name</label>
+                    <input name = "expense_name[]" class="form-control" value="" placeholder="paycheck , cash" id="expense_name">
+                </div>
+                
+                <div class="form-group col-md-2 py-1">
+                    <label for="inputState" class="fw-bold" >Type</label>
+                    <select id="inputState" name = "expense_type[]" class="form-select expenseType">
+                        <option value="Cash">Cash</option>
+                        <option value="Check">Check</option>
+                        <option selected value="Wire">Wire</option>
+                        <option selected value="Card">Card</option>
+                    </select>
+                </div>
+
+                <div class="form-group col-md-2 py-1">
+                    <label for="amount" class="fw-bold">$Amount</label>
+                    <input id="input_field" type="number" name = "expense_amount[]" class="form-control" value=100></input>
+                </div>
+
+                <div class="form-group col-md-auto py-1">
+                    <label for="amount" class="fw-bold">Date</label>
+                    <input id="input_field" type="date" name = "expense_date[]" class="form-control" value=100></input>
+                </div>
+
+                <div class="py-4 ps-1 col-md-1">
+                    <button class="btn btn-outline-danger"id="remove_item_btn"><span>Remove</span></button>
+                </div>
+            </div>
+                `
+            )
+
+        })
+
+        $(document).on('click',"#remove_item_btn", function(current){
+            current.preventDefault();
+
+            let form_field = $(this).parent().parent();
+            $(form_field).remove()
+        })
+
+    })
+</script>
+{% endblock %} 
