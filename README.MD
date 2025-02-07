@@ -19,6 +19,7 @@ Software Dependencies:
 
 
 Program Setup (Very Easy)
+
     1. Download the latest version of Python at python.org
 
     2. Locate and Open the folder and a terminal
