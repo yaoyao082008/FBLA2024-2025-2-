@@ -26,10 +26,12 @@ Program Setup (Very Easy)
 
     3. Install all Dependencies using "pip install -r requirements.txt" in the terminal
 
-    4. Run the Program using "python app.py" in the terminal
+    4. Decrypt the secret key file by running "python decrypt.py"
 
-    5. Open the web browser of choice and navigate to "http://localhost:5000" (IMPORTANT MUST BE LOCAL HOST)
+    5. Run the Program using "python app.py" in the terminal
 
-    6. Login and Enjoy !
+    6. Open the web browser of choice and navigate to "http://localhost:5000" (IMPORTANT MUST BE LOCAL HOST)
+
+    7. Login and Enjoy !
 
  - Yaozhou Xiong & Shreyas Sindhaval & Prateek Kalusani

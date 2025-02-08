@@ -1,9 +1,13 @@
 import firebase_admin
 from firebase_admin import firestore, credentials
+from google.oauth2 import service_account
+from firebase_admin import auth
 import datetime
 
-# Application Default credentials are automatically created.
+creds= credentials.Certificate("dec_creds.json")
+
 app = firebase_admin.initialize_app(creds)
+
 db = firestore.client()
 
 current_year = int(datetime.datetime.today().strftime("%Y"))
