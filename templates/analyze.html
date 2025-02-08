@@ -10,12 +10,29 @@
 {% block body %}
 
 <div class="container-xxl ">
+
+
+
     <div class="row py-5 justify-content-center">
         
-        <div class="text-center col-md-auto" style="width: 550px;">
-            <h2 class="text-center py-5">Balance of <em class="fw-bold">${{ user["balance"] | round(2) }}</em></h2>
-            <div class="row py-3">
-                <div class="offset-md-1 col-md-3">
+        <div class="text-start col-md-auto" style="width: 60%;">
+            <h2 class="text-center py-5">Balance of <em class="fw-bold" style="font-style: normal;">${{ user["balance"] | round(2) }}</em></h2>
+
+            <div class="row">
+                <div class=" offset-md-1 col-md-auto">
+                    <a type="button" class="btn btn-info" href="#endOfMonthChart">End Of Month Balance</a>
+                </div>
+                <div class="col-md-auto">
+                    <a type="button" class="btn btn-info" href="#monthlyNetIncomeChart">Monthly Net Income</a>
+                </div>
+                <div class="col-md-auto">
+                    <a type="button" class="btn btn-info" href="#spendingTypeChart">Income/Expense Type</a>
+                </div>
+            </div>
+            <h3 class="text-center pt-5" id="endOfMonthChart">End Of Month Balance</h3>
+            <hr>
+            <div class="row py-3" >
+                <div class=" offset-md-1 col-md-3">
                     <select name="startDate" id="startDate" class="form-select">
                         <option value="0" selected>January</option>
                         <option value="1">February</option>
@@ -58,13 +75,21 @@
         </div>
     </div>
 
-    <div class="row py-3">
-        <div class="offset-md-2 col-md-6" style="width: 300px;">
+    <div class="row py-3 justify-content-center" id="monthlyNetIncomeChart">
+        <div class="col-md-6" style="width: 60%;">
+            <h3 class="text-center">Monthly Net Income</h3>
+            <hr>
+            <canvas id="netIncome"></canvas>
+        </div>
+    </div>
+
+    <div class="row py-3 justify-content-center" id="spendingTypeChart">
+        <div class="col-md-6" style="width: 30%;">
             <h3 class="text-center">Income Type </h3>
             <hr>
             <canvas id="incomePieChart"></canvas>
         </div>
-        <div class="text-center offset-md-2 col-md-6" style="width: 300px;">
+        <div class="text-center offset-md-2 col-md-6" style="width: 30%;">
             <h3 class="text-center">Expense Type </h3>
             <hr>
             <canvas id="expensePieChart"></canvas>
@@ -160,6 +185,78 @@
     );
 
     //end line chart
+
+    //net income bar chart
+
+
+    
+
+    var netIncomeElement = document.getElementById('netIncome')
+
+    const incomeMonths =   [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+
+    const incomeData = [2500, -1200, 1800, -900, 1500, -300, 
+    2200, 1700, -1500, 800, -600, 3000];
+
+
+    new Chart(netIncomeElement, {
+        type: 'bar',
+        data: {
+            labels: incomeMonths,
+            datasets: [{
+                label: 'Monthly Net Income',
+                data: incomeData, // Replace with your values
+                backgroundColor: function(context) {
+                    // Different colors for positive/negative values
+                    const value = context.raw;
+                    return value < 0 
+                        ? 'rgba(255, 99, 132, 0.5)'  // red for negative
+                        : 'rgba(75, 192, 192, 0.5)'; // green for positive
+                },
+                borderColor:function(context) {
+                    const value = context.raw;
+                    return value < 0 
+                        ? 'rgba(255, 99, 132, 1)' 
+                        : 'rgba(75, 192, 192, 1)';
+                },
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Months'
+                    }
+                },
+                y: {
+                    beginAtZero: false,
+                    title: {
+                        display: true,
+                        text: 'Money (USD)'
+                    },
+                    ticks: {
+                        // Include a dollar sign in the ticks
+                        callback: function(value) {
+                            // Format negative currency properly
+                            return value < 0 
+                                ? '-$' + Math.abs(value) 
+                                : '$' + value;
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+
+    //end of net income bar chart
+
 
 
     //income type pie chart
