@@ -87,7 +87,6 @@ def update_balance(email):
         curr_amount = float(incomes[i]["amt"])
         #dates incomes by month , [YYYY,M,D] where YYYY is index 0
         date = [int(d) for d in incomes[i]["date"].split("-")]
-        print(date)
         #current month of the transaction
         yearOfTransaction=date[0]
         
