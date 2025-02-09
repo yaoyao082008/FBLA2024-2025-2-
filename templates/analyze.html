@@ -12,23 +12,31 @@
 <div class="container-xxl ">
 
 
+    <div class="py-3 text-center">
+        <h2 class="text-center py-5">Balance of <em class="fw-bold" style="font-style: normal;">${{ user["balance"] | round(2) }}</em></h2>
+
+        <div class="row justify-content-center">
+            <div class="col-md-auto">
+                <a type="button" class="btn btn-info" href="#endOfMonthChart">End Of Month Balance</a>
+            </div>
+            <div class="col-md-auto">
+                <a type="button" class="btn btn-info" href="#monthlyNetIncomeChart">Monthly Net Income</a>
+            </div>
+            <div class="col-md-auto">
+            <a type="button" class="btn btn-info" href="#savingsChart">Savings Calculator</a>
+            </div>
+            <div class="col-md-auto">
+                <a type="button" class="btn btn-info" href="#spendingTypeChart">Income/Expense Type</a>
+            </div>
+           
+        </div>
+    </div>
+
 
     <div class="row py-5 justify-content-center">
         
         <div class="text-start col-md-auto" style="width: 60%;">
-            <h2 class="text-center py-5">Balance of <em class="fw-bold" style="font-style: normal;">${{ user["balance"] | round(2) }}</em></h2>
-
-            <div class="row">
-                <div class=" offset-md-1 col-md-auto">
-                    <a type="button" class="btn btn-info" href="#endOfMonthChart">End Of Month Balance</a>
-                </div>
-                <div class="col-md-auto">
-                    <a type="button" class="btn btn-info" href="#monthlyNetIncomeChart">Monthly Net Income</a>
-                </div>
-                <div class="col-md-auto">
-                    <a type="button" class="btn btn-info" href="#spendingTypeChart">Income/Expense Type</a>
-                </div>
-            </div>
+            
             <h3 class="text-center pt-5" id="endOfMonthChart">End Of Month Balance</h3>
             <hr>
             <div class="row py-3" >
@@ -68,20 +76,113 @@
                     </select>
                 </div>
                 <div class="offset-md-1 col-md-1">
-                    <button class="btn btn-outline-success"id="calculatePeriod" onclick="showMonths()"><span>Go</span></button>
+                    <button class="btn btn-outline-success"id="calculatePeriod" onclick="refresh()"><span>Go</span></button>
                 </div>
             </div>
-            <canvas id="lineChart" class="py-2"></canvas>
+            <div class="row py-2 justify-content-center">
+                <div class="col-md-6" style="width: 100%;">
+                    <canvas id="lineChart" class="py-2"></canvas>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="row py-3 justify-content-center" id="monthlyNetIncomeChart">
+
+    <div class="row py-5 justify-content-center">
+        
+        <div class="text-start col-md-auto" style="width: 60%;">
+            
+            <h3 class="text-center pt-3" id="monthlyNetIncomeChart">Monthly Net Income</h3>
+            <hr>
+            <div class="row py-3" >
+                <div class=" offset-md-1 col-md-3">
+                    <select name="startDate" id="netStartDate" class="form-select">
+                        <option value="0" selected>January</option>
+                        <option value="1">February</option>
+                        <option value="2">March</option>
+                        <option value="3">April</option>
+                        <option value="4">May</option>
+                        <option value="5">June</option>
+                        <option value="6">July</option>
+                        <option value="7">August</option>
+                        <option value="8">September</option>
+                        <option value="9">October</option>
+                        <option value="10">November</option>
+                        <option value="11">Decemer</option>
+                    </select>
+                </div>
+                <div class="offset-md-1 col-md-1">
+                    <p class="fw-bold h5">to</p>
+                </div>
+                <div class="offset-md-1 col-md-3">
+                    <select name="endDate" id="netEndDate" class="form-select">
+                        <option value="0" selected>January</option>
+                        <option value="1">February</option>
+                        <option value="2">March</option>
+                        <option value="3">April</option>
+                        <option value="4">May</option>
+                        <option value="5">June</option>
+                        <option value="6">July</option>
+                        <option value="7">August</option>
+                        <option value="8">September</option>
+                        <option value="9">October</option>
+                        <option value="10">November</option>
+                        <option value="11">Decemer</option>
+                    </select>
+                </div>
+                <div class="offset-md-1 col-md-1">
+                    <button class="btn btn-outline-success"id="calculatePeriod" onclick="refresh()"><span>Go</span></button>
+                </div>
+            </div>
+            <div class="row py-2 justify-content-center">
+                <div class="col-md-6" style="width: 100%;">
+                    <canvas id="netIncome" class="py-2"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row py-3 justify-content-center" id="savingsChart">
+        
+        <div class="col-md-6" style="width: 70%;">
+            <h3 class="text-center">Savings Calculator</h3>
+            <hr>
+
+
+            <div class="row py-3 justify-content-center">
+                <div class="col-md-auto">
+                    <p class="fw-bold h5">Savings Type: </p>
+                </div>
+                <div class="col-md-3">
+                    <select name="savingsType" id="savingsType" class="form-select">
+                        <option value="rothIRA">Roth IRA</option>
+                        <option value="S&P 500">S&P 500</option>
+                        <option value="highYield">High Yield Savings Account</option>
+                    </select>
+                </div>
+                <div class="col-md-auto">
+                    <p class="fw-bold h5">% Income Monthly: </p>
+                </div>
+                <div class="col-md-2">
+                    <input type="number" id="savingsPercent" min="0" max="100" placeholder="%Monthly" class="form-control">
+                </div>
+                <div class=" col-md-2">
+                    <button type="submit"   onclick="refresh()" class="btn btn-outline-success" id="calculateSavings">Calculate!</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- <div class="row py-3 justify-content-center" id="monthlyNetIncomeChart"></div>
         <div class="col-md-6" style="width: 60%;">
             <h3 class="text-center">Monthly Net Income</h3>
             <hr>
             <canvas id="netIncome"></canvas>
         </div>
-    </div>
+    </div> -->
+
+    
 
     <div class="row py-3 justify-content-center" id="spendingTypeChart">
         <div class="col-md-6" style="width: 25%;">
@@ -99,7 +200,7 @@
 </div>
 
 <script>
-    function showMonths(){
+    function refresh(){
         location.reload();
     }
 
@@ -134,7 +235,7 @@
     const allData = [{{user['months'][1]}},{{user['months'][2]}},{{user['months'][3]}},{{user['months'][4]}},{{user['months'][5]}},{{user['months'][6]}},{{user['months'][7]}},{{user['months'][8]}},{{user['months'][9]}},{{user['months'][10]}},{{user['months'][11]}},{{user['months'][12]}}];
     const data = [];
 
-    for (let i = 0; i <= end; i++) {
+    for (let i = start; i <= end; i++) {
         data.push(allData[i]);
     }
 
@@ -193,22 +294,43 @@
 
     var netIncomeElement = document.getElementById('netIncome')
 
+
+    var netStart = parseInt(document.getElementById("netStartDate").value, 10);
+    var netEnd = parseInt(document.getElementById("netEndDate").value, 10);
+
+    
+
+    if (netStart >= netEnd ){
+        netStart=0
+        netEnd=11
+    }
+
+
     const incomeMonths =   [
         'January', 'February', 'March', 'April', 'May', 'June',
         'July', 'August', 'September', 'October', 'November', 'December'
     ];
 
+    const netIncomeLabels = incomeMonths.slice(netStart,netEnd+1)
+
     const incomeData = [2500, -1200, 1800, -900, 1500, -300, 
     2200, 1700, -1500, 800, -600, 3000];
+
+    const netIncomeData = [];
+
+    for (let i = netStart; i<=netEnd;i++){
+        netIncomeData.push(incomeData[i])
+    }
+
 
 
     new Chart(netIncomeElement, {
         type: 'bar',
         data: {
-            labels: incomeMonths,
+            labels: netIncomeLabels,
             datasets: [{
                 label: 'Monthly Net Income',
-                data: incomeData, // Replace with your values
+                data: netIncomeData, // Replace with your values
                 backgroundColor: function(context) {
                     // Different colors for positive/negative values
                     const value = context.raw;
