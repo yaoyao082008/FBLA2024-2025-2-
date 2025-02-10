@@ -118,6 +118,8 @@ def update_balance(email):
             #tally up last years expenses(negative)
             months[0] -= curr_amount
     
+    netIncome = months.copy()
+    
     for i in range(1,len(months)):
         months[i] += months[i-1]
         
@@ -127,7 +129,8 @@ def update_balance(email):
 
     data = {
         "balance": bal,
-        "months": months
+        "months": months,
+        "netIncome":netIncome,
         }
 
     #print(months)
