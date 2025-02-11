@@ -33,7 +33,8 @@ def new_user(email, name):
         "incomes": [],
         "expenses": [],
         "balance": 0,
-        "months": [0 for i in range(12)],
+        "months": [0 for i in range(13)], #index is 0 is all past income and expense while 1-12 is months of the current year
+        "netIncome":[0 for i in range(13)], #net income for each month
         "income_types": {"Cash": 0, "Check": 0, "Wire": 0, "Card": 0},
         "expense_types": {"Cash": 0, "Check": 0, "Wire": 0, "Card": 0}
         }
