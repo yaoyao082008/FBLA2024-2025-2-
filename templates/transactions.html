@@ -111,7 +111,7 @@
                 "expense_date": $("div input[name='expense_date[]']").map( function() { return $(this).val(); } ).get()
             }, // data for server
             success: function (response) {
-                window.location.href = '/analyze'; // reload page if succesful
+                window.location.reload()
             },
             error: function (response) {
                 alert("Make sure you are inputting the proper data to the correct fields!")
@@ -333,7 +333,16 @@
 
         <!-- updates displayed balance and redirects to Analyze -->
         <div class="py-4 ps-1 text-center">
-            <button class="btn btn-success" onclick="updateIncomes()"> <span>Analyze</span></button>
+            <div class="row justify-content-center">
+                <div class="col-md-1">
+                    <button class="btn btn-outline-success" onclick="updateIncomes()"> <span>Save</span></button>
+                </div>
+
+                <div class="col-md-1 offset-md-1">
+                    <a href="/analyze" class="btn btn-outline-primary"> Analyze</a>
+                </div>
+            </div>
+            
         </div>
     </div>
 </div>

@@ -53,7 +53,7 @@
                         <option value="8">September</option>
                         <option value="9">October</option>
                         <option value="10">November</option>
-                        <option value="11">Decemer</option>
+                        <option value="11">December</option>
                     </select>
                 </div>
                 <div class="offset-md-1 col-md-1">
@@ -61,7 +61,7 @@
                 </div>
                 <div class="offset-md-1 col-md-3">
                     <select name="endDate" id="endDate" class="form-select">
-                        <option value="0" selected>January</option>
+                        <option value="0">January</option>
                         <option value="1">February</option>
                         <option value="2">March</option>
                         <option value="3">April</option>
@@ -72,11 +72,11 @@
                         <option value="8">September</option>
                         <option value="9">October</option>
                         <option value="10">November</option>
-                        <option value="11">Decemer</option>
+                        <option value="11" selected>December</option>
                     </select>
                 </div>
                 <div class="offset-md-1 col-md-1">
-                    <button class="btn btn-outline-success"id="calculatePeriod" onclick="refresh()"><span>Go</span></button>
+                    <button class="btn btn-outline-success"id="calculatePeriod" onclick="lineChart()"><span>Go</span></button>
                 </div>
             </div>
             <div class="row py-2 justify-content-center">
@@ -108,7 +108,7 @@
                         <option value="8">September</option>
                         <option value="9">October</option>
                         <option value="10">November</option>
-                        <option value="11">Decemer</option>
+                        <option value="11">December</option>
                     </select>
                 </div>
                 <div class="offset-md-1 col-md-1">
@@ -116,7 +116,7 @@
                 </div>
                 <div class="offset-md-1 col-md-3">
                     <select name="endDate" id="netEndDate" class="form-select">
-                        <option value="0" selected>January</option>
+                        <option value="0">January</option>
                         <option value="1">February</option>
                         <option value="2">March</option>
                         <option value="3">April</option>
@@ -127,11 +127,11 @@
                         <option value="8">September</option>
                         <option value="9">October</option>
                         <option value="10">November</option>
-                        <option value="11">Decemer</option>
+                        <option value="11" selected>December</option>
                     </select>
                 </div>
                 <div class="offset-md-1 col-md-1">
-                    <button class="btn btn-outline-success"id="calculatePeriod" onclick="refresh()"><span>Go</span></button>
+                    <button class="btn btn-outline-success"id="calculatePeriod" onclick="netIncomeGraph()"><span>Go</span></button>
                 </div>
             </div>
             <div class="row py-2 justify-content-center">
@@ -165,10 +165,10 @@
                     <p class="fw-bold h5">% Balance: </p>
                 </div>
                 <div class="col-md-2">
-                    <input type="number" id="savingsPercent" min="0" max="100" placeholder="%Balance" class="form-control">
+                    <input type="number" id="savingsPercent" min="0" max="100" placeholder="%Balance" value="0" class="form-control">
                 </div>
                 <div class=" offset-md-1 col-md-2">
-                    <button type="submit"   onclick="refresh()" class="btn btn-outline-success" id="calculateSavings">Calculate!</button>
+                    <button type="submit"   onclick="graphSavings()" class="btn btn-outline-success" id="calculateSavings">Calculate!</button>
                 </div>
             </div>
 
@@ -206,368 +206,377 @@
 </div>
 
 <script>
-    function refresh(){
-        location.reload();
-    }
-
-    
-    (async function() {
-
-    //line chart
-    
-    var lineElement =  document.getElementById('lineChart');
-    
-    var start = parseInt(document.getElementById("startDate").value, 10);
-    var end = parseInt(document.getElementById("endDate").value, 10);
-
-    
-
-    if (start >= end ){
-        start=0
-        end=11
-    }
-
-    
-    
-    const months = [
-        'January', 'February', 'March', 'April', 'May', 'June',
-        'July', 'August', 'September', 'October', 'November', 'December'
-    ];
-    
-    
-    const lineLabels = months.slice(start,end+1);
 
 
-    const allData = [{{user['months'][1]}},{{user['months'][2]}},{{user['months'][3]}},{{user['months'][4]}},{{user['months'][5]}},{{user['months'][6]}},{{user['months'][7]}},{{user['months'][8]}},{{user['months'][9]}},{{user['months'][10]}},{{user['months'][11]}},{{user['months'][12]}}];
-    const data = [];
+    function lineChart(){
 
-    for (let i = start; i <= end; i++) {
-        data.push(allData[i]);
-    }
-
-
-    
-    const lineData = {
-        labels : lineLabels,
-        datasets : [{
-            label: 'End of Month Balance',
-            data: data,
-            fill: false,
-            borderColor: 'rgb(75, 192, 192)',
-            tension: 0.1
-        }]
-            
-    };
-      
-
-    const lineGraph = new Chart(
-        lineElement,
-      {
-        type: 'line',
-        
-        data: lineData,
-        
-        options: {
-            responsive : true,
-            scales: {
-                x: {
-                    title: {
-                    display: true,
-                    text: 'Months',
-                    }
-                },
-                
-                y: {
-                    beginAtZero: true,
-                    title: {
-                    display: true,
-                    text: 'Balance In Dollars'
-                    }
-                }
-            
-            }
+        let chartStatus = Chart.getChart("lineChart");
+        if (chartStatus != undefined) {
+            chartStatus.destroy();
         }
+
+        //-- End of chart destroy 
+
+
+
+        //get the canvas for the line chart
+        var lineElement =  document.getElementById('lineChart');
         
-    }
-    );
+        var start = parseInt(document.getElementById("startDate").value, 10);
+        var end = parseInt(document.getElementById("endDate").value, 10);
 
-    //end line chart
+        //input validation
+        if (start >= end ){
+            start=0
+            end=11
+        }
 
-    //net income bar chart
-
-
-    
-
-    var netIncomeElement = document.getElementById('netIncome')
-
-
-    var netStart = parseInt(document.getElementById("netStartDate").value, 10);
-    var netEnd = parseInt(document.getElementById("netEndDate").value, 10);
-
-    
-
-    if (netStart >= netEnd ){
-        netStart=0
-        netEnd=11
-    }
-
-
-    const incomeMonths =   [
-        'January', 'February', 'March', 'April', 'May', 'June',
-        'July', 'August', 'September', 'October', 'November', 'December'
-    ];
-
-    const netIncomeLabels = incomeMonths.slice(netStart,netEnd+1)
-
-    try {
         
-    } catch (error) {
+        // x axis labels
+        const months = [
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ];
         
-    }
-    const incomeData = [{{user['netIncome'][1]}},{{user['netIncome'][2]}},{{user['netIncome'][3]}},{{user['netIncome'][4]}},{{user['netIncome'][5]}},{{user['netIncome'][6]}},{{user['netIncome'][7]}},{{user['netIncome'][8]}},{{user['netIncome'][9]}},{{user['netIncome'][10]}},{{user['netIncome'][11]}},{{user['netIncome'][12]}}];
-
-    const netIncomeData = [];
-
-    for (let i = netStart; i<=netEnd;i++){
-        netIncomeData.push(incomeData[i])
-    }
+        
+        //shape the graph according to the user input
+        const lineLabels = months.slice(start,end+1);
 
 
+        const allData = Object.values({{ user['months'] }});
+        const data = allData.slice(start+1, end + 2);
 
-    new Chart(netIncomeElement, {
-        type: 'bar',
-        data: {
-            labels: netIncomeLabels,
-            datasets: [{
-                label: 'Monthly Net Income',
-                data: netIncomeData, // Replace with your values
-                backgroundColor: function(context) {
-                    // Different colors for positive/negative values
-                    const value = context.raw;
-                    return value < 0 
-                        ? 'rgba(255, 99, 132, 0.5)'  // red for negative
-                        : 'rgba(75, 192, 192, 0.5)'; // green for positive
-                },
-                borderColor:function(context) {
-                    const value = context.raw;
-                    return value < 0 
-                        ? 'rgba(255, 99, 132, 1)' 
-                        : 'rgba(75, 192, 192, 1)';
-                },
-                borderWidth: 1
+        
+        const lineData = {
+            labels : lineLabels,
+            datasets : [{
+                label: 'End of Month Balance',
+                data: data,
+                fill: false,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
             }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                x: {
-                    title: {
+                
+        };
+        
+
+        const lineGraph = new Chart(
+            lineElement,
+        {
+            type: 'line',
+            
+            data: lineData,
+            
+            options: {
+                responsive : true,
+                scales: {
+                    x: {
+                        title: {
                         display: true,
-                        text: 'Months'
-                    }
-                },
-                y: {
-                    beginAtZero: false,
-                    title: {
-                        display: true,
-                        text: 'Money (USD)'
+                        text: 'Months',
+                        }
                     },
-                    ticks: {
-                        // Include a dollar sign in the ticks
-                        callback: function(value) {
-                            // Format negative currency properly
-                            return value < 0 
-                                ? '-$' + Math.abs(value) 
-                                : '$' + value;
+                    
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                        display: true,
+                        text: 'Balance In Dollars'
+                        }
+                    }
+                
+                }
+            }
+            
+        }
+        );
+
+        //end line chart
+    };
+
+
+    function netIncomeGraph(){
+
+
+
+        let chartStatus = Chart.getChart("netIncome");
+        if (chartStatus != undefined) {
+            chartStatus.destroy();
+        }
+
+
+        var netIncomeElement = document.getElementById('netIncome')
+
+
+        var netStart = parseInt(document.getElementById("netStartDate").value, 10);
+        var netEnd = parseInt(document.getElementById("netEndDate").value, 10);
+
+        
+
+        if (netStart >= netEnd ){
+            netStart=0
+            netEnd=11
+        }
+
+
+        const incomeMonths =   [
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ];
+
+        
+        // user customized input values
+        const netIncomeLabels = incomeMonths.slice(netStart,netEnd+1)
+
+        //user's 
+        const incomeData = Object.values({{ user['netIncome'] }});
+
+        const netIncomeData = incomeData.slice(netStart+1, netEnd + 2);
+
+
+
+        netIncomeChart = new Chart(netIncomeElement, {
+            type: 'bar',
+            data: {
+                labels: netIncomeLabels,
+                datasets: [{
+                    label: 'Monthly Net Income',
+                    data: netIncomeData, // Replace with your values
+                    backgroundColor: function(context) {
+                        // Different colors for positive/negative values
+                        const value = context.raw;
+                        return value < 0 
+                            ? 'rgba(255, 99, 132, 0.5)'  // red for negative
+                            : 'rgba(75, 192, 192, 0.5)'; // green for positive
+                    },
+                    borderColor:function(context) {
+                        const value = context.raw;
+                        return value < 0 
+                            ? 'rgba(255, 99, 132, 1)' 
+                            : 'rgba(75, 192, 192, 1)';
+                    },
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Months'
+                        }
+                    },
+                    y: {
+                        beginAtZero: false,
+                        title: {
+                            display: true,
+                            text: 'Money (USD)'
+                        },
+                        ticks: {
+                            // Include a dollar sign in the ticks
+                            callback: function(value) {
+                                // Format negative currency properly
+                                return value < 0 
+                                    ? '-$' + Math.abs(value) 
+                                    : '$' + value;
+                            }
                         }
                     }
                 }
             }
-        }
-    });
-
-
-    //end of net income bar chart
-
-
-    //savings Chart
-
-    var savingsChart = document.getElementById('savingsGraph');
-
-    var savingsType = document.getElementById("savingsType").value
-    var savingsPercent = parseInt(document.getElementById("savingsPercent").value, 10);
-
-    
-
-    const interestRates = {
-        'Roth IRA' : 1.08,
-        'S&P500' : 1.085,
-        'High Yield Savings Account' : 1.05
-    }
-
-    var initial = (savingsPercent*.01)*{{user['balance']}};
-    var interst=interestRates[savingsType];
-    var inflationInterest = 1.033;
-
-    const savings=[];
-    const inflation =[];
-
-
-    for (let x = 0; x<=50; x+=.1){
-        savings.push({
-            x: x,
-            y: initial*Math.pow(interst,x)
         });
-
-        inflation.push({
-            x: x,
-            y: initial*Math.pow(inflationInterest,x)
-        })
     }
 
-    const savingsConfig = {
-        type: 'line',
-        data: {
-            datasets: [
-                {
-                label: savingsType,
-                data: savings,
-                borderColor: 'blue',
-                backgroundColor: 'blue',
-                pointRadius: 0, // Hide points for smooth line
-                tension: 0.4 // Adds slight curve to the line
-                },
-                {
-                label: "Annual Inflation",
-                data: inflation,
-                borderColor: 'red',
-                backgroundColor: 'red',
-                pointRadius: 0, // Hide points for smooth line
-                tension: 0.4 // Adds slight curve to the line
-                },
+    function graphSavings(){
 
-            ]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                x: {
-                    type: 'linear',
-                    title: {
-                        display: true,
-                        text: 'Years'
+        let chartStatus = Chart.getChart("savingsGraph");
+        if (chartStatus != undefined) {
+            chartStatus.destroy();
+        }
+
+        var savingsChart = document.getElementById('savingsGraph');
+
+        var savingsType = document.getElementById("savingsType").value
+        var savingsPercent = parseInt(document.getElementById("savingsPercent").value, 10);
+
+        if (savingsPercent < 0 || {{user['balance']}} <= 0){
+            savingsPercent = 0
+        }
+
+        
+
+        const interestRates = {
+            'Roth IRA' : 1.08,
+            'S&P500' : 1.085,
+            'High Yield Savings Account' : 1.05
+        }
+
+        var initial = (savingsPercent*.01)*{{user['balance']}};
+        var interst=interestRates[savingsType];
+        var inflationInterest = 1.033;
+
+        const savings=[];
+        const inflation =[];
+
+
+        for (let x = 0; x<=50; x+=.1){
+            savings.push({
+                x: x,
+                y: initial*Math.pow(interst,x)
+            });
+
+            inflation.push({
+                x: x,
+                y: initial*Math.pow(inflationInterest,x)
+            })
+        }
+
+        const savingsConfig = {
+            type: 'line',
+            data: {
+                datasets: [
+                    {
+                    label: savingsType,
+                    data: savings,
+                    borderColor: 'blue',
+                    backgroundColor: 'blue',
+                    pointRadius: 0, // Hide points for smooth line
+                    tension: 0.4 // Adds slight curve to the line
+                    },
+                    {
+                    label: "Annual Inflation",
+                    data: inflation,
+                    borderColor: 'red',
+                    backgroundColor: 'red',
+                    pointRadius: 0, // Hide points for smooth line
+                    tension: 0.4 // Adds slight curve to the line
+                    },
+
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        type: 'linear',
+                        title: {
+                            display: true,
+                            text: 'Years'
+                        }
+                    },
+                    y: {
+                        type: 'linear',
+                        title: {
+                            display: true,
+                            text: 'Money In Dollars'
+                        },
+                        beginAtZero: true
                     }
                 },
-                y: {
-                    type: 'linear',
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
                     title: {
                         display: true,
-                        text: 'Money In Dollars'
-                    },
-                    beginAtZero: true
-                }
-            },
-            plugins: {
-                legend: {
-                    position: 'top',
-                },
-                title: {
-                    display: true,
-                    text: 'Savings Graph'
+                        text: 'Savings Graph'
+                    }
                 }
             }
+        };
+
+        savingsGraph = new Chart(savingsChart, savingsConfig);
+    }
+
+    function usageType(){
+
+        var incomePieElement =  document.getElementById('incomePieChart');
+
+        const incomePieLabels = [
+            'Wire', 'Cash', 'Check','Card'
+        ];
+
+        const incomePieData = {
+            labels : incomePieLabels,
+            datasets : [{
+                label: 'Amount',
+                data: [ {{ user['income_types']['Wire']}} , {{ user['income_types']['Cash']}} , {{ user['income_types']['Check']}},  {{ user['income_types']['Card']}} ],
+                backgroundColor: [
+                'rgb(255, 99, 132)',
+                'rgb(54, 162, 235)',
+                'rgb(255, 205, 86)',
+                'rgb(90, 31, 31)'
+                ],
+                hoverOffset : 4
+            }]
+                
+        };
+
+
+        const incomePieGraph = new Chart(
+            incomePieElement,
+        {
+            type: 'pie',
+            
+            data: incomePieData,
+            
+            
         }
-    };
+        );
 
-    new Chart(savingsChart, savingsConfig);
-
-    //end Savings Chart
+        //end of income pie chart
 
 
-    //income type pie chart
 
-    var incomePieElement =  document.getElementById('incomePieChart');
 
-    const incomePieLabels = [
-        'Wire', 'Cash', 'Check','Card'
-    ];
-    
-    const incomePieData = {
-        labels : incomePieLabels,
-        datasets : [{
-            label: 'Amount',
-            data: [ {{ user['income_types']['Wire']}} , {{ user['income_types']['Cash']}} , {{ user['income_types']['Check']}},  {{ user['income_types']['Card']}} ],
-            backgroundColor: [
-            'rgb(255, 99, 132)',
-            'rgb(54, 162, 235)',
-            'rgb(255, 205, 86)',
-            'rgb(90, 31, 31)'
-            ],
-            hoverOffset : 4
-        }]
+
+
+        //expense pie chart
+
+
+        var expensePieElement =  document.getElementById('expensePieChart');
+
+        const expensePieLabels = [
+            'Wire', 'Cash', 'Check','Card'
+        ];
+
+        const expensePieData = {
+            labels : expensePieLabels,
+            datasets : [{
+                label: 'Amount',
+                data: [ {{ user['expense_types']['Wire']}} , {{ user['expense_types']['Cash']}} , {{ user['expense_types']['Check']}}, {{ user['expense_types']['Card']}}  ],
+                backgroundColor: [
+                'rgb(255, 99, 132)',
+                'rgb(54, 162, 235)',
+                'rgb(255, 205, 86)',
+                'rgb(90, 31, 31)'
+                ],
+                hoverOffset: 4
+            }]
+                
+        };
+
+
+        const expensePieGraph = new Chart(
+            expensePieElement,
+        {
+            type: 'pie',
             
-    };
-      
-
-    const incomePieGraph = new Chart(
-        incomePieElement,
-      {
-        type: 'pie',
-        
-        data: incomePieData,
-        
-        
-    }
-    );
-
-    //end of income pie chart
-
-
-
-
-
-
-    //expense pie chart
-
-
-    var expensePieElement =  document.getElementById('expensePieChart');
-
-    const expensePieLabels = [
-        'Wire', 'Cash', 'Check','Card'
-    ];
-    
-    const expensePieData = {
-        labels : expensePieLabels,
-        datasets : [{
-            label: 'Amount',
-            data: [ {{ user['expense_types']['Wire']}} , {{ user['expense_types']['Cash']}} , {{ user['expense_types']['Check']}}, {{ user['expense_types']['Card']}}  ],
-            backgroundColor: [
-            'rgb(255, 99, 132)',
-            'rgb(54, 162, 235)',
-            'rgb(255, 205, 86)',
-            'rgb(90, 31, 31)'
-            ],
-            hoverOffset: 4
-        }]
+            data: expensePieData,
             
-    };
-      
+            
+        }
+        );
 
-    const expensePieGraph = new Chart(
-        expensePieElement,
-      {
-        type: 'pie',
-        
-        data: expensePieData,
-        
-        
+        //end of expense pie chart
     }
-    );
 
+    lineChart();
+    netIncomeGraph();
+    graphSavings();
+    usageType();
 
-    //end of expense pie chart
-    
-  })();
 </script>
 
 {% endblock %} 

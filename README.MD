@@ -8,11 +8,11 @@ Program Synopsis:
     Expense Type.
     
 
-How to use:
-    1. First the user must log in with google
-    2. then the user can input their financial transactions in the dashboard section
-    3. once complete, the user can click analyze which will redirect to another page with 3 graphs
-    4. the user can study the analytics page and view their earning habits
+How To Use:
+    1. First the user must log in with Google
+    2. Then the user can input their financial transactions in the dashboard section
+    3. Once complete, the user can click analyze which will redirect to another page with 3 graphs
+    4. The user can study the analytics page and view their earning habits
 
 Software Dependencies:
     -Firebase
