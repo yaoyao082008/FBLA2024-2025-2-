@@ -23,7 +23,11 @@ Program Setup (Very Easy)
 
     1. Download the latest version of Python at python.org
 
+    2. run "git clone https://github.com/yaoyao082008/FBLA2024-2025-2-.git" in the terminal or just download it from github
+
     2. Locate and Open the folder and a terminal
+
+    4. If on windows you can ignore steps 3-5 by typing "run.bat" in the terminal
 
     3. Install all Dependencies using "pip install -r requirements.txt" in the terminal
 
