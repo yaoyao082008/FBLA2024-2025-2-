@@ -41,4 +41,4 @@ Program Setup (Very Easy)
 
     7. Login and Enjoy !
 
- - Yaozhou Xiong & Shreyas Sindhaval & Prateek Kalusani
+ - Yaozhou Xiong  & Prateek Kalusani & Shreyas Sindhaval

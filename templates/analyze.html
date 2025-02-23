@@ -14,7 +14,7 @@
 
     <div class="py-3 text-center">
         <h2 class="text-center py-5">Balance of <em class="fw-bold" style="font-style: normal;">${{ user["balance"] | round(2) }}</em></h2>
-
+        <!--Navigation for the charts-->
         <div class="row justify-content-center">
             <div class="col-md-auto">
                 <a type="button" class="btn" style="background-color: cornflowerblue; opacity: .9" href="#endOfMonthChart"> <span style="color:beige;">End Of Month Balance</span></a>
@@ -33,6 +33,7 @@
     </div>
 
 
+    <!--End Of Month Chart-->
     <div class="row py-5 justify-content-center">
         
         <div class="text-start col-md-auto" style="width: 60%;">
@@ -87,7 +88,7 @@
         </div>
     </div>
 
-
+    <!--Net Income Chart-->
     <div class="row py-5 justify-content-center">
         
         <div class="text-start col-md-auto" style="width: 60%;">
@@ -143,6 +144,7 @@
     </div>
 
 
+    <!--Savings Chart-->
     <div class="row py-3 justify-content-center" id="savingsChart">
         
         <div class="col-md-6" style="width: 70%;">
@@ -180,16 +182,10 @@
 
         </div>
     </div>
-    <!-- <div class="row py-3 justify-content-center" id="monthlyNetIncomeChart"></div>
-        <div class="col-md-6" style="width: 60%;">
-            <h3 class="text-center">Monthly Net Income</h3>
-            <hr>
-            <canvas id="netIncome"></canvas>
-        </div>
-    </div> -->
-
     
 
+    
+    <!--Expense and Income type chart-->
     <div class="row py-3 justify-content-center" id="spendingTypeChart">
         <div class="col-md-6" style="width: 25%;">
             <h3 class="text-center">Income Type </h3>
@@ -210,6 +206,7 @@
 
     function lineChart(){
 
+        //-- Destroy current chart instance
         let chartStatus = Chart.getChart("lineChart");
         if (chartStatus != undefined) {
             chartStatus.destroy();
@@ -243,6 +240,7 @@
         const lineLabels = months.slice(start,end+1);
 
 
+        //only put the certain months the user asked for
         const allData = Object.values({{ user['months'] }});
         const data = allData.slice(start+1, end + 2);
 
@@ -298,7 +296,7 @@
     function netIncomeGraph(){
 
 
-
+        //-- Destroy current chart instance
         let chartStatus = Chart.getChart("netIncome");
         if (chartStatus != undefined) {
             chartStatus.destroy();
@@ -307,7 +305,7 @@
 
         var netIncomeElement = document.getElementById('netIncome')
 
-
+        //get the user start and end paramters
         var netStart = parseInt(document.getElementById("netStartDate").value, 10);
         var netEnd = parseInt(document.getElementById("netEndDate").value, 10);
 
@@ -328,7 +326,7 @@
         // user customized input values
         const netIncomeLabels = incomeMonths.slice(netStart,netEnd+1)
 
-        //user's 
+        //user's input parameters
         const incomeData = Object.values({{ user['netIncome'] }});
 
         const netIncomeData = incomeData.slice(netStart+1, netEnd + 2);
@@ -398,6 +396,7 @@
         var savingsChart = document.getElementById('savingsGraph');
 
         var savingsType = document.getElementById("savingsType").value
+        //user savings 
         var savingsPercent = parseInt(document.getElementById("savingsPercent").value, 10);
 
         if (savingsPercent < 0 || {{user['balance']}} <= 0){
@@ -412,6 +411,7 @@
             'High Yield Savings Account' : 1.05
         }
 
+
         var initial = (savingsPercent*.01)*{{user['balance']}};
         var interst=interestRates[savingsType];
         var inflationInterest = 1.033;
@@ -419,7 +419,7 @@
         const savings=[];
         const inflation =[];
 
-
+        //get alot of points to plot to make the graph seem continuous
         for (let x = 0; x<=50; x+=.1){
             savings.push({
                 x: x,
@@ -572,6 +572,7 @@
         //end of expense pie chart
     }
 
+    //display these charts
     lineChart();
     netIncomeGraph();
     graphSavings();

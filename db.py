@@ -1,15 +1,16 @@
+# module imports
 import firebase_admin
 from firebase_admin import firestore, credentials
 from google.oauth2 import service_account
 from firebase_admin import auth
 import datetime
 
-creds= credentials.Certificate("dec_creds.json")
+# database credentials
+creds = credentials.Certificate("dec_creds.json")
 
+# firebase initialization
 app = firebase_admin.initialize_app(creds)
-
 db = firestore.client()
-
 current_year = int(datetime.datetime.today().strftime("%Y"))
 
 # get user from database
@@ -21,12 +22,15 @@ def get_user(email, name=None):
             if usr["email"] == email:
                 return usr # return user if exists
         except Exception as e:
-            pass      
-    return new_user(email, name)
+            pass
 
+    return new_user(email, name) # return user object
+
+# create new user in database
 def new_user(email, name):
     ref = db.collection("users").document(email)
 
+    # initialize data
     data = {
         "email": email,
         "name": name,
@@ -39,15 +43,18 @@ def new_user(email, name):
         "expense_types": {"Cash": 0, "Check": 0, "Wire": 0, "Card": 0}
         }
 
-    ref.set(data)
+    ref.set(data) # update in database
     return data
 
+# update incomes
 def update_incomes(email, incomes):
-    #name, type, amt, date
     ref = db.collection("users").document(email)
+
+    # initialize values
     data = {}
     types = {"Cash": 0, "Check": 0, "Wire": 0, "Card":0}
-    print(types)
+
+    # update local incomes
     for income in incomes:
         data[incomes[income][0]] = {
             'type': incomes[income][1],
@@ -56,15 +63,18 @@ def update_incomes(email, incomes):
             }
         types[incomes[income][1]] += 1
 
-    
+    # update in database
     ref.update({"incomes": data, "income_types": types})
     
-
+# update expenses
 def update_expenses(email, expenses):
-    #name, type, amt, date
     ref = db.collection("users").document(email)
+
+    # initialize values
     data = {}
     types = {"Cash": 0, "Check": 0, "Wire": 0, "Card": 0}
+
+    # update local expenses
     for expense in expenses:
         data[expenses[expense][0]]=  {
             'type': expenses[expense][1],
@@ -72,60 +82,65 @@ def update_expenses(email, expenses):
             'date': expenses[expense][3]
             }
         types[expenses[expense][1]] += 1
-            
+    
+    # update in database
     ref.update({"expenses": data, "expense_types": types})
     
-
+# updata balance
 def update_balance(email):
     ref = db.collection("users").document(email)
     usr = get_user(email)
     incomes = usr['incomes']
 
+    months = [0 for i in range(13)] # 0: all past years & 1 - 12: current month income
 
-    months = [0 for i in range(13)] #indexes 1 - 12 represent current months' income while index 0 is all past years income
-    #finds total income
+    # calculates total incomes
     for i in incomes:
         curr_amount = float(incomes[i]["amt"])
-        #dates incomes by month , [YYYY,M,D] where YYYY is index 0
+
+        # income dates
         date = [int(d) for d in incomes[i]["date"].split("-")]
-        #current month of the transaction
-        yearOfTransaction=date[0]
+
+        # current income month
+        yearOfTransaction = date[0]
         
         if yearOfTransaction == 2025:
-            #current month of transaction
+            # current month expense
             curr_month = date[1]
             months[curr_month] = months[curr_month] + curr_amount
         else:
-            #tally up last years income
+            # calculate last year income
             months[0] += curr_amount
 
 
         
     expenses = usr['expenses']
-    #finds total expenses
+    # calculate total expenses
     for i in expenses:
-        #transaction amount
-        curr_amount = float(expenses[i]["amt"])        
-        #dates expenses by month
+        curr_amount = float(expenses[i]["amt"]) 
+
+        # expense dates
         date = [int(d) for d in expenses[i]["date"].split("-")]
-        #if date[0] == current_year:
-        yearOfTransaction=date[0]
+
+        # current expense year
+        yearOfTransaction = date[0]
         
-        if yearOfTransaction == 2025:
-            #current month of transaction
+        if yearOfTransaction == current_year:
+            # current month expense
             curr_month=date[1]
             months[curr_month] = months[curr_month] - curr_amount
         else:
-            #tally up last years expenses(negative)
+            # previous year expenses
             months[0] -= curr_amount
     
+
     netIncome = months.copy()
     
     for i in range(1,len(months)):
         months[i] += months[i-1]
         
     
-    #balance in december is equal to current balance
+    # december balance = net balance
     bal = months[12]
 
     data = {
@@ -134,5 +149,5 @@ def update_balance(email):
         "netIncome":netIncome,
         }
 
-    #print(months)
+    # update in database
     ref.update(data)
