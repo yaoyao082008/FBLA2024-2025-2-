@@ -27,18 +27,18 @@ Program Setup (Very Easy)
 
     2. run "git clone https://github.com/yaoyao082008/FBLA2024-2025-2-.git" in the terminal or just download it from github
 
-    2. Locate and Open the folder in the terminal
+    3. Locate and Open the folder in the terminal
 
-    4. If on windows you can ignore steps 3-5 by typing ".\run.bat" in the terminal
+    4. If on windows you can ignore steps 5-7 by typing ".\run.bat" in the terminal
 
-    3. Install all Dependencies using "pip install -r requirements.txt" in the terminal
+    5. Install all Dependencies using "pip install -r requirements.txt" in the terminal
 
-    4. Decrypt the secret key file by running "python decrypt.py"
+    6. Decrypt the secret key file by running "python decrypt.py"
 
-    5. Run the Program using "python app.py" in the terminal
+    7. Run the Program using "python app.py" in the terminal
 
-    6. Open the web browser of choice and navigate to "http://localhost:5000" (IMPORTANT MUST BE LOCAL HOST)
+    8. Open the web browser of choice and navigate to "http://localhost:5000" (IMPORTANT MUST BE LOCAL HOST)
 
-    7. Login and Enjoy !
+    9. Login and Enjoy !
 
  - Yaozhou Xiong  & Prateek Kalusani & Shreyas Sindhaval
