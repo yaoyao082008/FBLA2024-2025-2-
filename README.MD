@@ -5,7 +5,7 @@ Program Synopsis:
     Finally, the app analyzes the spending patterns by displaying 5 graphs : 
     End of month balance, 
     Net Income,
-    Savings,
+    Savings Calculator,
     Income type, 
     Expense Type.
     
@@ -14,8 +14,8 @@ How To Use:
     1. First the user must log in with Google
     2. Then the user can input their financial transactions in the dashboard section
     3. Be sure to save your transaction before clicking analyze
-    3. Once complete, the user can click analyze which will redirect to another page with 3 graphs
-    4. The user can study the analytics page and view their earning habits
+    4. Once complete, the user can click analyze which will redirect to another page with 3 graphs
+    5. The user can study the analytics page and view their earning habits
 
 Software Dependencies:
     -Firebase
