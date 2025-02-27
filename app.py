@@ -128,7 +128,7 @@ def logout():
     session.clear() # clear browser session
     session.modified = True
 
-    return ""
+    return "" # server success
 
 # run project
 if __name__ == "__main__":

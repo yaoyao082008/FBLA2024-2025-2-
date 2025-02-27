@@ -127,13 +127,17 @@
 {% block body %}
 <div class="container">
     <div class="row py-5 justify-content-center">
+        <!-- User Balance -->
         <div class="col-md-auto">
             <h6>You have <span class="h1">${{user["balance"] | round(2)}}</span></h4>
         </div>
     </div>
+    
+    <!-- User Incomes -->
     <div class="row py-3">
         <div class="col-md-6 text-center" id="income_form">
             <div class="row justify-content-start">
+                <!-- New Income-->
                 <div class="col-md-1 offset-md-1">
                     <button class="btn btn-success"id="add_income_btn"><span>Add</span></button>
                 </div>
@@ -145,7 +149,7 @@
                     <input  class="form-control" type="search" aria-label="Search" id="incomeSearch" onkeyup="filterIncome()" placeholder="Search for name">
                 </div>
 
-
+                <!-- Income Filter -->
                 <div class="dropdown col-md-auto">
                     <a class="btn btn-light dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
                       <img src="{{url_for('static',filename='filter.png')}}" alt="filter" style="width:30px; height: 30px;">
@@ -176,9 +180,7 @@
 
             </div>
             <hr>
-            <!-- creating new incomes -->
-
-            <!-- determines income types -->
+            <!-- View Incomes -->
             {% for income in user['incomes'] %}
             <div class="row justify-content-center  income_input_field">
                 <div class="form-group col-md-3 py-1">
@@ -228,8 +230,11 @@
             {% endfor %}
             
         </div>
+
+        <!-- User Expenses -->
         <div class="col-md-6 text-center" id="expense_form">
             <div class="row justify-content-start">
+                <!-- New Expense -->
                 <div class="col-md-1 offset-md-1">
                     <button class="btn btn-success"id="add_expense_btn"> <span>Add</span></button>
                 </div>
@@ -240,11 +245,11 @@
                     <input  class="form-control" type="search" aria-label="Search" id="expenseSearch" onkeyup="filterExpense()" placeholder="Search for name">
                 </div>
 
+                <!-- Expense Filtering -->
                 <div class="dropdown col-md-auto">
                     <a class="btn btn-light dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
                       <img src="{{url_for('static',filename='filter.png')}}" alt="filter" style="width:30px; height: 30px;">
                     </a>
-                  <!-- checks for changes in requested expense 'type' filtering -->
 
                     <ul class="dropdown-menu text-center" aria-labelledby="dropdownMenuLink">
                         <li>
@@ -272,8 +277,7 @@
             </div>
             <hr>
 
-            <!-- creating new expenses -->
-            <!-- determines expense types -->
+            <!-- View Expenses -->
             {% for expense in user["expenses"] %}
             <div class="row justify-content-center expense_input_field">
                 <div class="form-group col-md-3 py-1">
@@ -329,20 +333,18 @@
             
 
         </div>
-        
-
-        <!-- updates displayed balance and redirects to Analyze -->
-        <div class="py-4 ps-1 text-center">
-            <div class="row justify-content-center">
-                <div class="col-md-1">
-                    <button class="btn btn-outline-success" onclick="updateIncomes()"> <span>Save</span></button>
+            <div class="py-4 ps-1 text-center">
+                <div class="row justify-content-center">
+                    <!-- DB Update Button -->
+                    <div class="col-md-1">
+                        <button class="btn btn-outline-success" onclick="updateIncomes()"> <span>Save</span></button>
+                    </div>
+                    
+                    <!-- Analyze Redirect -->
+                    <div class="col-md-1 offset-md-1">
+                        <a href="/analyze" class="btn btn-outline-primary"> Analyze</a>
+                    </div>
                 </div>
-
-                <div class="col-md-1 offset-md-1">
-                    <a href="/analyze" class="btn btn-outline-primary"> Analyze</a>
-                </div>
-            </div>
-            
         </div>
     </div>
 </div>

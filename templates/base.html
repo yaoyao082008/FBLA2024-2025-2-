@@ -119,10 +119,7 @@
         <div
           class="collapse navbar-collapse"
           id="main-nav"
-        >
-          
-
-          
+        >          
           <ul class="navbar-nav">
 
             <!-- if the user is logged in show the user only pages-->
@@ -134,10 +131,7 @@
               <a href="/analyze" class="nav-link h5"> Analyze </a>
             </li>
             {% endif %}
-            
-
           </ul>
-          
           
           <div class="mx-2 my-lg-0 ms-auto">
             <!-- if the user is logged in display show the log out-->
@@ -150,11 +144,9 @@
           </div>
         </div>
     </nav>
-
     {% block body %}{% endblock %}
-
-    
   </body>
+  
   <!-- Chatbase bubble implementation-->
   <script>
     (function(){if(!window.chatbase||window.chatbase("getState")!=="initialized"){window.chatbase=(...arguments)=>{if(!window.chatbase.q){window.chatbase.q=[]}window.chatbase.q.push(arguments)};window.chatbase=new Proxy(window.chatbase,{get(target,prop){if(prop==="q"){return target.q}return(...args)=>target(prop,...args)}})}const onLoad=function(){const script=document.createElement("script");script.src="https://www.chatbase.co/embed.min.js";script.id="lA3sKm4DesnAwlzXNDM-R";script.domain="www.chatbase.co";document.body.appendChild(script)};if(document.readyState==="complete"){onLoad()}else{window.addEventListener("load",onLoad)}})();

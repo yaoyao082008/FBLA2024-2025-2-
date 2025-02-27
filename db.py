@@ -16,6 +16,7 @@ current_year = int(datetime.datetime.today().strftime("%Y"))
 # get user from database
 def get_user(email, name=None):
     ref = db.collection("users").stream()
+    
     for usr in ref:
         usr = usr.to_dict()
         try:

@@ -1,17 +1,15 @@
-{% extends 'base.html'%}
+{% extends 'base.html'%} <!-- Extension to base -->
 
 {% block head %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script> <!-- Chart Module Import -->
 {% endblock %}
 
-{% block title %}Analyze{% endblock %}
+{% block title %}Analyze{% endblock %} <!-- Analyze Header -->
 
 
 {% block body %}
-
+<!-- User Balance and Filters -->
 <div class="container-xxl ">
-
-
     <div class="py-3 text-center">
         <h2 class="text-center py-5">Balance of <em class="fw-bold" style="font-style: normal;">${{ user["balance"] | round(2) }}</em></h2>
         <!--Navigation for the charts-->
@@ -28,7 +26,6 @@
             <div class="col-md-auto">
                 <a type="button" class="btn" style="background-color: cornflowerblue; opacity: .9" href="#spendingTypeChart"><span style="color:beige;">Income/Expense Type</span></a>
             </div>
-           
         </div>
     </div>
 
@@ -301,7 +298,7 @@
         if (chartStatus != undefined) {
             chartStatus.destroy();
         }
-
+        //-- End of chart destroy
 
         var netIncomeElement = document.getElementById('netIncome')
 
@@ -387,11 +384,12 @@
     }
 
     function graphSavings(){
-
+        //-- Destroy current chart instance
         let chartStatus = Chart.getChart("savingsGraph");
         if (chartStatus != undefined) {
             chartStatus.destroy();
         }
+        //-- End of chart destroy
 
         var savingsChart = document.getElementById('savingsGraph');
 
