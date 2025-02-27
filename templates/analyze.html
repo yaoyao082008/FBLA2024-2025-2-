@@ -398,6 +398,7 @@
         var savingsPercent = parseInt(document.getElementById("savingsPercent").value, 10);
 
         if (savingsPercent < 0 || {{user['balance']}} <= 0 || savingsPercent>100){
+            alert("Please input a valid percentage from 0-100")
             savingsPercent = 0
         }
 
